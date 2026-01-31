@@ -1,6 +1,6 @@
 import os
 from app import create_app, db
-from app.models import User, Address, Product, Category, Review, Cart, CartItem, Order, OrderItem, Payment
+from app.models import User, Address, Product, Category, Review, Cart, CartItem, Order, OrderItem, Payment, Wishlist, Coupon
 
 app = create_app(os.getenv('FLASK_ENV', 'development'))
 
@@ -18,7 +18,9 @@ def make_shell_context():
         'CartItem': CartItem,
         'Order': Order,
         'OrderItem': OrderItem,
-        'Payment': Payment
+        'Payment': Payment,
+        'Wishlist': Wishlist,
+        'Coupon': Coupon
     }
 
 if __name__ == '__main__':

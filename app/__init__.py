@@ -31,7 +31,7 @@ def create_app(config_name='default'):
     login_manager.login_message = 'Please log in to access this page.'
 
     # Register blueprints
-    from app.routes import auth, products, cart, orders, admin, payments
+    from app.routes import auth, products, cart, orders, admin, payments, wishlist, coupons, addresses
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(products.bp)
@@ -39,6 +39,9 @@ def create_app(config_name='default'):
     app.register_blueprint(orders.bp)
     app.register_blueprint(admin.bp)
     app.register_blueprint(payments.bp)
+    app.register_blueprint(wishlist.bp)
+    app.register_blueprint(coupons.bp)
+    app.register_blueprint(addresses.bp)
 
     # Create upload folder if it doesn't exist
     import os

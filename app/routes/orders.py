@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models import Order, OrderItem, Cart, CartItem, Product, Address, User
+from app.services.email_service import EmailService
 from decimal import Decimal
 
 bp = Blueprint('orders', __name__, url_prefix='/api/orders')
@@ -72,6 +73,10 @@ def checkout():
         CartItem.query.filter_by(cart_id=cart.id).delete()
 
         db.session.commit()
+
+        # Send order confirmation email
+        user = User.query.get(current_user_id)
+        EmailService.send_order_confirmation(user.email, order)
 
         return jsonify({
             'message': 'Order created successfully',
@@ -206,8 +211,16 @@ def update_order_status(order_id):
                 'valid_statuses': valid_statuses
             }), 400
 
+        old_status = order.status
         order.status = new_status
         db.session.commit()
+
+        # Send email notification based on status change
+        user = User.query.get(order.user_id)
+        if new_status == 'shipped' and old_status != 'shipped':
+            EmailService.send_order_shipped(user.email, order)
+        elif new_status == 'delivered' and old_status != 'delivered':
+            EmailService.send_order_delivered(user.email, order)
 
         return jsonify({
             'message': 'Order status updated',
