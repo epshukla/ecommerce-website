@@ -9,7 +9,9 @@ A medium-complexity e-commerce platform with Flask and MySQL, featuring user aut
 - **ORM:** SQLAlchemy
 - **Authentication:** Flask-Login + JWT
 - **Payment:** Custom simulation service
-- **Frontend:** HTML/CSS/JavaScript (or React)
+- **Frontend:** React with Material-UI (MUI)
+- **State Management:** React Context API / React Query
+- **Routing:** React Router v6
 
 ## Database Schema Design
 
@@ -175,78 +177,178 @@ A medium-complexity e-commerce platform with Flask and MySQL, featuring user aut
 - [ ] Category management
 - [ ] Bulk product operations
 
-### Phase 8: Additional Features
+### Phase 8: Additional Features ✅ COMPLETED
 **Goal:** Enhanced user experience
 
-- [ ] Product reviews and ratings
-- [ ] Email notifications (order confirmations)
-- [ ] Discount codes/coupons system
-- [ ] Wishlist functionality
-- [ ] Recently viewed products
-- [ ] Product recommendations
-- [ ] Stock alerts (low inventory warnings)
+- [x] Product reviews and ratings
+- [x] Email notifications (order confirmations, shipping, delivery)
+- [x] Discount codes/coupons system (percentage & fixed discounts)
+- [x] Wishlist functionality
+- [x] Address management
+- [x] Database migrations with Alembic
+- [x] Stock management
+- [ ] Recently viewed products (future)
+- [ ] Product recommendations (future)
 
-### Phase 9: Testing & Refinement
+### Phase 9: React Frontend with Material-UI
+**Goal:** Modern, sleek, and modular UI
+
+**Tech Stack:**
+- React 18
+- Material-UI (MUI) v5
+- React Router v6
+- Axios for API calls
+- React Context API for state management
+- React Query for data fetching
+
+**Directory Structure:**
+```
+frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/           # Reusable UI components
+│   │   ├── common/          # Shared components
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── LoadingSpinner.jsx
+│   │   │   └── ErrorMessage.jsx
+│   │   ├── product/         # Product-related components
+│   │   │   ├── ProductCard.jsx
+│   │   │   ├── ProductGrid.jsx
+│   │   │   └── ProductFilters.jsx
+│   │   ├── cart/            # Cart components
+│   │   │   ├── CartItem.jsx
+│   │   │   └── CartSummary.jsx
+│   │   └── admin/           # Admin components
+│   │       ├── AdminSidebar.jsx
+│   │       └── DataTable.jsx
+│   ├── pages/               # Page components
+│   │   ├── Home.jsx
+│   │   ├── Products.jsx
+│   │   ├── ProductDetail.jsx
+│   │   ├── Cart.jsx
+│   │   ├── Checkout.jsx
+│   │   ├── Orders.jsx
+│   │   ├── OrderDetail.jsx
+│   │   ├── Wishlist.jsx
+│   │   ├── Profile.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   └── admin/
+│   │       ├── Dashboard.jsx
+│   │       ├── ProductManagement.jsx
+│   │       ├── OrderManagement.jsx
+│   │       └── UserManagement.jsx
+│   ├── contexts/            # React Context providers
+│   │   ├── AuthContext.jsx
+│   │   └── CartContext.jsx
+│   ├── services/            # API service layer
+│   │   ├── api.js
+│   │   ├── authService.js
+│   │   ├── productService.js
+│   │   ├── cartService.js
+│   │   └── orderService.js
+│   ├── hooks/               # Custom React hooks
+│   │   ├── useAuth.js
+│   │   └── useCart.js
+│   ├── utils/               # Utility functions
+│   │   ├── formatters.js
+│   │   └── validators.js
+│   ├── theme/               # MUI theme configuration
+│   │   └── theme.js
+│   ├── App.jsx              # Main App component
+│   └── index.js             # Entry point
+└── package.json
+```
+
+**Features to Implement:**
+- [ ] Responsive layout with MUI Grid system
+- [ ] Modern UI with MUI components (Card, Button, AppBar, Drawer, etc.)
+- [ ] Product catalog with filtering and search
+- [ ] Shopping cart with real-time updates
+- [ ] Checkout flow with address selection
+- [ ] Order history and tracking
+- [ ] Wishlist management
+- [ ] User authentication (login/register)
+- [ ] Admin dashboard with analytics
+- [ ] Product management (CRUD)
+- [ ] Order management for admins
+- [ ] Coupon application at checkout
+- [ ] Toast notifications for user feedback
+
+**Design Principles:**
+- Modular component architecture
+- Reusable components in `components/common/`
+- Page-specific components in `pages/`
+- Clean separation of concerns
+- Responsive design (mobile-first)
+- Consistent spacing and typography using MUI theme
+- Color scheme: Modern gradient palette with Material Design
+
+### Phase 10: Testing & Refinement
 **Goal:** Production readiness
 
-- [ ] Unit tests for critical functions
+- [ ] Unit tests for React components (Jest + React Testing Library)
 - [ ] Integration tests for API endpoints
-- [ ] Security review (SQL injection, XSS protection)
-- [ ] Performance optimization
-- [ ] Input validation
+- [ ] E2E tests with Cypress
+- [ ] Security review (XSS protection, CSRF tokens)
+- [ ] Performance optimization (code splitting, lazy loading)
+- [ ] Input validation on frontend and backend
 - [ ] Error handling and logging
-- [ ] API documentation
-- [ ] Deployment preparation
+- [ ] API documentation (Swagger/OpenAPI)
+- [ ] Deployment preparation (Docker, CI/CD)
+- [ ] Accessibility audit (WCAG compliance)
 
-## Recommended Project Structure
+## Current Project Structure
 
 ```
-ecommerce-project/
-├── app/
-│   ├── __init__.py              # Flask app initialization
-│   ├── config.py                # Configuration settings
+amazon-ecommerce/
+├── app/                         # Backend (Flask)
+│   ├── __init__.py
 │   ├── models/                  # SQLAlchemy models
 │   │   ├── __init__.py
 │   │   ├── user.py
 │   │   ├── product.py
-│   │   ├── order.py
 │   │   ├── cart.py
-│   │   └── payment.py
+│   │   ├── order.py
+│   │   ├── payment.py
+│   │   ├── wishlist.py
+│   │   └── coupon.py
 │   ├── routes/                  # API endpoints/blueprints
 │   │   ├── __init__.py
 │   │   ├── auth.py
 │   │   ├── products.py
 │   │   ├── cart.py
 │   │   ├── orders.py
-│   │   └── admin.py
+│   │   ├── admin.py
+│   │   ├── payments.py
+│   │   ├── wishlist.py
+│   │   ├── coupons.py
+│   │   └── addresses.py
 │   ├── services/                # Business logic
-│   │   ├── __init__.py
 │   │   ├── payment_simulator.py
-│   │   ├── email_service.py
-│   │   └── order_service.py
-│   ├── utils/                   # Helper functions
-│   │   ├── __init__.py
-│   │   ├── validators.py
-│   │   └── decorators.py
-│   ├── templates/               # HTML templates
-│   │   ├── base.html
-│   │   ├── products/
-│   │   ├── auth/
-│   │   └── admin/
-│   └── static/                  # CSS, JS, images
-│       ├── css/
-│       ├── js/
-│       └── images/
+│   │   └── email_service.py
+│   └── utils/                   # Helper functions
+│       ├── validators.py
+│       └── decorators.py
+├── frontend/                    # Frontend (React + MUI) - TO BE CREATED
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── contexts/
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   ├── utils/
+│   │   └── theme/
+│   └── package.json
 ├── migrations/                  # Database migrations
-├── tests/                       # Test files
-│   ├── test_auth.py
-│   ├── test_products.py
-│   └── test_orders.py
 ├── config.py                    # App configuration
-├── requirements.txt             # Python dependencies
-├── .env.example                 # Environment variables template
+├── requirements.txt
+├── .env
 ├── .gitignore
-└── run.py                       # Application entry point
+└── run.py
 ```
 
 ## Key Dependencies (requirements.txt)
