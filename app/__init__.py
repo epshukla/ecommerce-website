@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-from config import config
+import config as config_module
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -17,7 +17,7 @@ def create_app(config_name='default'):
     app = Flask(__name__)
 
     # Load configuration
-    app.config.from_object(config[config_name])
+    app.config.from_object(config_module.config[config_name])
 
     # Initialize extensions with app
     db.init_app(app)
