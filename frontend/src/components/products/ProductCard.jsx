@@ -20,6 +20,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import cartService from '../../services/cartService';
 import { formatCurrency } from '../../utils/currency';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const ProductCard = ({ product, onAddedToCart }) => {
   const { isAuthenticated } = useAuth();
@@ -120,7 +121,7 @@ const ProductCard = ({ product, onAddedToCart }) => {
         <CardMedia
           component="img"
           height="200"
-          image={product.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}
+          image={getImageUrl(product.image_url)}
           alt={product.name}
           sx={{
             objectFit: 'cover',
