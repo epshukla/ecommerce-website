@@ -31,7 +31,7 @@ def create_app(config_name='default'):
     login_manager.login_message = 'Please log in to access this page.'
 
     # Register blueprints
-    from app.routes import auth, products, cart, orders, admin, payments, wishlist, coupons, addresses
+    from app.routes import auth, products, cart, orders, admin, payments, wishlist, coupons, addresses, uploads
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(products.bp)
@@ -42,11 +42,11 @@ def create_app(config_name='default'):
     app.register_blueprint(wishlist.bp)
     app.register_blueprint(coupons.bp)
     app.register_blueprint(addresses.bp)
+    app.register_blueprint(uploads.bp)
 
     # Create upload folder if it doesn't exist
     import os
-    upload_folder = app.config['UPLOAD_FOLDER']
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
+    from app.config.upload_config import UPLOAD_FOLDER, PRODUCT_UPLOAD_FOLDER
+    os.makedirs(PRODUCT_UPLOAD_FOLDER, exist_ok=True)
 
     return app

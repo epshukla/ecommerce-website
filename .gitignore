@@ -50,5 +50,10 @@ Thumbs.db
 # Logs
 *.log
 
+# Uploads
+uploads/
+!uploads/.gitkeep
+!uploads/products/.gitkeep
+
 # Migrations (optional - uncomment if you don't want to track migrations)
 # migrations/

@@ -5,6 +5,7 @@ from app import db
 from app.models import Product, Category, Order, User, Payment, Review
 from app.utils.decorators import admin_required
 from app.utils.validators import validate_required_fields
+from app.utils.image_utils import save_product_image, delete_product_image, get_image_url
 from decimal import Decimal
 from datetime import datetime, timedelta
 
@@ -78,7 +79,22 @@ def get_dashboard_stats():
 def create_product():
     """Create a new product"""
     try:
-        data = request.get_json()
+        # Check if request has multipart form data (with image) or JSON
+        if request.content_type and 'multipart/form-data' in request.content_type:
+            data = request.form.to_dict()
+
+            # Handle image upload
+            image_url = ''
+            if 'image' in request.files:
+                file = request.files['image']
+                success, message, filename = save_product_image(file)
+                if success:
+                    image_url = get_image_url(filename)
+                else:
+                    return jsonify({'error': message}), 400
+        else:
+            data = request.get_json()
+            image_url = data.get('image_url', '')
 
         # Validate required fields
         required = ['name', 'price', 'category_id', 'stock_quantity']
@@ -93,7 +109,7 @@ def create_product():
             price=Decimal(str(data['price'])),
             category_id=data['category_id'],
             stock_quantity=data['stock_quantity'],
-            image_url=data.get('image_url', '')
+            image_url=image_url
         )
 
         db.session.add(product)
@@ -118,7 +134,28 @@ def update_product(product_id):
         if not product:
             return jsonify({'error': 'Product not found'}), 404
 
-        data = request.get_json()
+        # Check if request has multipart form data (with image) or JSON
+        if request.content_type and 'multipart/form-data' in request.content_type:
+            data = request.form.to_dict()
+
+            # Handle image upload
+            if 'image' in request.files:
+                file = request.files['image']
+                # Delete old image if exists
+                if product.image_url:
+                    old_filename = product.image_url.split('/')[-1]
+                    delete_product_image(old_filename)
+
+                # Save new image
+                success, message, filename = save_product_image(file)
+                if success:
+                    product.image_url = get_image_url(filename)
+                else:
+                    return jsonify({'error': message}), 400
+        else:
+            data = request.get_json()
+            if 'image_url' in data:
+                product.image_url = data['image_url']
 
         # Update fields
         if 'name' in data:
@@ -131,8 +168,6 @@ def update_product(product_id):
             product.category_id = data['category_id']
         if 'stock_quantity' in data:
             product.stock_quantity = data['stock_quantity']
-        if 'image_url' in data:
-            product.image_url = data['image_url']
 
         db.session.commit()
 
@@ -154,6 +189,11 @@ def delete_product(product_id):
         product = Product.query.get(product_id)
         if not product:
             return jsonify({'error': 'Product not found'}), 404
+
+        # Delete associated image if exists
+        if product.image_url:
+            filename = product.image_url.split('/')[-1]
+            delete_product_image(filename)
 
         db.session.delete(product)
         db.session.commit()
