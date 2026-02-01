@@ -19,6 +19,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import cartService from '../../services/cartService';
+import { formatCurrency } from '../../utils/currency';
 
 const ProductCard = ({ product, onAddedToCart }) => {
   const { isAuthenticated } = useAuth();
@@ -170,7 +171,7 @@ const ProductCard = ({ product, onAddedToCart }) => {
           <Box sx={{ mt: 'auto' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
               <Typography variant="h5" color="primary" fontWeight="bold">
-                ${parseFloat(product.price).toFixed(2)}
+                {formatCurrency(product.price)}
               </Typography>
               {product.stock > 0 && product.stock < 10 && (
                 <Typography variant="caption" color="warning.main">
