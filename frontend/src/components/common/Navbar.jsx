@@ -125,10 +125,12 @@ const Navbar = () => {
                 variant="contained"
                 onClick={() => navigate('/register')}
                 sx={{
-                  backgroundColor: theme.palette.common.white,
-                  color: theme.palette.primary.main,
+                  background: `${theme.palette.common.white} !important`,
+                  color: '#6366f1 !important',
+                  fontWeight: 'bold',
                   '&:hover': {
-                    backgroundColor: alpha(theme.palette.common.white, 0.9),
+                    background: `${alpha(theme.palette.common.white, 0.95)} !important`,
+                    color: '#4f46e5 !important',
                   },
                 }}
               >

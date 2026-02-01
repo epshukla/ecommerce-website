@@ -54,13 +54,17 @@ const Home = () => {
           size="large"
           onClick={() => navigate('/products')}
           sx={{
-            backgroundColor: 'white',
-            color: 'primary.main',
+            background: 'white !important',
+            color: '#6366f1 !important',
             px: 4,
             py: 1.5,
             fontSize: '1.1rem',
+            fontWeight: 'bold',
+            boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
             '&:hover': {
-              backgroundColor: 'rgba(255,255,255,0.9)',
+              background: 'rgba(255,255,255,0.95) !important',
+              color: '#4f46e5 !important',
+              boxShadow: '0px 6px 16px rgba(0,0,0,0.15)',
             },
           }}
         >

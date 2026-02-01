@@ -28,8 +28,16 @@ const ProductCard = ({ product, onAddedToCart }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
+  const handleCardClick = (e) => {
+    // Don't navigate if clicking on buttons
+    if (e.target.closest('button')) {
+      return;
+    }
+    navigate(`/products/${product.id}`);
+  };
+
   const handleAddToCart = async () => {
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
@@ -54,7 +62,7 @@ const ProductCard = ({ product, onAddedToCart }) => {
   };
 
   const handleToggleFavorite = () => {
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
@@ -69,12 +77,15 @@ const ProductCard = ({ product, onAddedToCart }) => {
   return (
     <>
       <Card
+        onClick={handleCardClick}
         sx={{
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
+          cursor: 'pointer',
           transition: 'all 0.3s ease',
+          overflow: 'hidden',
           '&:hover': {
             transform: 'translateY(-8px)',
             boxShadow: (theme) => theme.shadows[8],
@@ -103,7 +114,7 @@ const ProductCard = ({ product, onAddedToCart }) => {
         </IconButton>
 
         {/* Stock Badge */}
-        {product.stock === 0 && (
+        {product.stock_quantity === 0 && (
           <Chip
             label="Out of Stock"
             color="error"
@@ -120,18 +131,43 @@ const ProductCard = ({ product, onAddedToCart }) => {
         {/* Product Image */}
         <CardMedia
           component="img"
-          height="200"
+          height="280"
           image={getImageUrl(product.image_url)}
           alt={product.name}
           sx={{
             objectFit: 'cover',
+            width: '100%',
           }}
         />
 
-        <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <CardContent
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            background: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(10px)',
+            color: 'white',
+            position: 'relative',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9))',
+              zIndex: 0,
+            },
+            '& > *': {
+              position: 'relative',
+              zIndex: 1,
+            }
+          }}
+        >
           {/* Category */}
-          <Typography variant="caption" color="primary" gutterBottom>
-            {product.category || 'Uncategorized'}
+          <Typography variant="caption" sx={{ color: '#B794F4' }} gutterBottom>
+            {product.category_name || 'Uncategorized'}
           </Typography>
 
           {/* Product Name */}
@@ -154,7 +190,6 @@ const ProductCard = ({ product, onAddedToCart }) => {
           {/* Description */}
           <Typography
             variant="body2"
-            color="text.secondary"
             sx={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -163,6 +198,7 @@ const ProductCard = ({ product, onAddedToCart }) => {
               WebkitBoxOrient: 'vertical',
               minHeight: '2.5em',
               mb: 2,
+              color: 'rgba(255, 255, 255, 0.7)',
             }}
           >
             {product.description}
@@ -171,12 +207,12 @@ const ProductCard = ({ product, onAddedToCart }) => {
           {/* Price and Add to Cart */}
           <Box sx={{ mt: 'auto' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Typography variant="h5" color="primary" fontWeight="bold">
+              <Typography variant="h5" sx={{ color: '#B794F4' }} fontWeight="bold">
                 {formatCurrency(product.price)}
               </Typography>
-              {product.stock > 0 && product.stock < 10 && (
-                <Typography variant="caption" color="warning.main">
-                  Only {product.stock} left
+              {product.stock_quantity > 0 && product.stock_quantity < 10 && (
+                <Typography variant="caption" sx={{ color: '#FFA500' }}>
+                  Only {product.stock_quantity} left
                 </Typography>
               )}
             </Box>
@@ -186,19 +222,19 @@ const ProductCard = ({ product, onAddedToCart }) => {
               fullWidth
               startIcon={<CartIcon />}
               onClick={handleAddToCart}
-              disabled={product.stock === 0}
+              disabled={product.stock_quantity === 0}
               sx={{
-                background: product.stock === 0
+                background: product.stock_quantity === 0
                   ? undefined
                   : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                 '&:hover': {
-                  background: product.stock === 0
+                  background: product.stock_quantity === 0
                     ? undefined
                     : 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
                 },
               }}
             >
-              {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+              {product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
             </Button>
           </Box>
         </CardContent>
