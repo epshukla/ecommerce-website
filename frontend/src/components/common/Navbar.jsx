@@ -19,12 +19,14 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext';
 import Sidebar from './Sidebar';
 
 const Navbar = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { cartCount } = useCart();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
@@ -77,7 +79,7 @@ const Navbar = () => {
 
               {/* Cart */}
               <IconButton color="inherit" onClick={() => navigate('/cart')}>
-                <Badge badgeContent={0} color="secondary">
+                <Badge badgeContent={cartCount} color="secondary">
                   <CartIcon />
                 </Badge>
               </IconButton>

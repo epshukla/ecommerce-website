@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Box } from '@mui/material';
 import { ThemeContextProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
+import { WishlistProvider } from './contexts/WishlistContext';
 import Navbar from './components/common/Navbar';
 
 // Pages
@@ -12,6 +14,7 @@ import Register from './pages/Register';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
 import Wishlist from './pages/Wishlist';
 import Orders from './pages/Orders';
 import Profile from './pages/Profile';
@@ -47,6 +50,14 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
               </ProtectedRoute>
             }
           />
@@ -88,7 +99,11 @@ function App() {
     <ThemeContextProvider>
       <Router>
         <AuthProvider>
-          <AppRoutes />
+          <CartProvider>
+            <WishlistProvider>
+              <AppRoutes />
+            </WishlistProvider>
+          </CartProvider>
         </AuthProvider>
       </Router>
     </ThemeContextProvider>

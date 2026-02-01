@@ -22,7 +22,10 @@ import {
   ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 import cartService from '../services/cartService';
+import wishlistService from '../services/wishlistService';
 import { formatCurrency } from '../utils/currency';
 import { getImageUrl } from '../utils/imageUrl';
 
@@ -30,9 +33,10 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { refreshCart } = useCart();
+  const { isInWishlist, refreshWishlist } = useWishlist();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [quantity, setQuantity] = useState(1);
 
@@ -69,6 +73,7 @@ const ProductDetail = () => {
 
     try {
       await cartService.addToCart(product.id, quantity);
+      refreshCart();
       setSnackbar({
         open: true,
         message: `Added ${quantity} ${quantity > 1 ? 'items' : 'item'} to cart!`,
@@ -83,13 +88,36 @@ const ProductDetail = () => {
     }
   };
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = async () => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
-    setIsFavorite(!isFavorite);
-    // TODO: Implement wishlist API call
+
+    try {
+      if (isInWishlist(product.id)) {
+        await wishlistService.removeFromWishlist(product.id);
+        setSnackbar({
+          open: true,
+          message: 'Removed from wishlist',
+          severity: 'info',
+        });
+      } else {
+        await wishlistService.addToWishlist(product.id);
+        setSnackbar({
+          open: true,
+          message: 'Added to wishlist!',
+          severity: 'success',
+        });
+      }
+      refreshWishlist();
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Failed to update wishlist',
+        severity: 'error',
+      });
+    }
   };
 
   const handleCloseSnackbar = () => {
@@ -258,7 +286,7 @@ const ProductDetail = () => {
                   },
                 }}
               >
-                {isFavorite ? (
+                {isInWishlist(product.id) ? (
                   <FavoriteIcon sx={{ color: 'error.main' }} />
                 ) : (
                   <FavoriteBorderIcon />

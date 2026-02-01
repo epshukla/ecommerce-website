@@ -20,12 +20,14 @@ import {
   ShoppingCart as EmptyCartIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 import cartService from '../services/cartService';
 import { formatCurrency } from '../utils/currency';
 import { getImageUrl } from '../utils/imageUrl';
 
 const Cart = () => {
   const navigate = useNavigate();
+  const { refreshCart } = useCart();
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,6 +43,7 @@ const Cart = () => {
       const data = await cartService.getCart();
       setCart(data);
       setError(null);
+      refreshCart();
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to load cart');
     } finally {

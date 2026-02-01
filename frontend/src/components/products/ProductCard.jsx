@@ -17,15 +17,19 @@ import {
   FavoriteBorder as FavoriteBorderIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext';
+import { useWishlist } from '../../contexts/WishlistContext';
 import { useNavigate } from 'react-router-dom';
 import cartService from '../../services/cartService';
+import wishlistService from '../../services/wishlistService';
 import { formatCurrency } from '../../utils/currency';
 import { getImageUrl } from '../../utils/imageUrl';
 
 const ProductCard = ({ product, onAddedToCart }) => {
   const { isAuthenticated } = useAuth();
+  const { refreshCart } = useCart();
+  const { isInWishlist, refreshWishlist } = useWishlist();
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const handleCardClick = (e) => {
@@ -44,6 +48,7 @@ const ProductCard = ({ product, onAddedToCart }) => {
 
     try {
       await cartService.addToCart(product.id, 1);
+      refreshCart();
       setSnackbar({
         open: true,
         message: 'Product added to cart!',
@@ -61,13 +66,36 @@ const ProductCard = ({ product, onAddedToCart }) => {
     }
   };
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = async () => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
-    setIsFavorite(!isFavorite);
-    // TODO: Implement wishlist API call
+
+    try {
+      if (isInWishlist(product.id)) {
+        await wishlistService.removeFromWishlist(product.id);
+        setSnackbar({
+          open: true,
+          message: 'Removed from wishlist',
+          severity: 'info',
+        });
+      } else {
+        await wishlistService.addToWishlist(product.id);
+        setSnackbar({
+          open: true,
+          message: 'Added to wishlist!',
+          severity: 'success',
+        });
+      }
+      refreshWishlist();
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Failed to update wishlist',
+        severity: 'error',
+      });
+    }
   };
 
   const handleCloseSnackbar = () => {
@@ -106,7 +134,7 @@ const ProductCard = ({ product, onAddedToCart }) => {
           }}
           onClick={handleToggleFavorite}
         >
-          {isFavorite ? (
+          {isInWishlist(product.id) ? (
             <FavoriteIcon sx={{ color: 'error.main' }} />
           ) : (
             <FavoriteBorderIcon />
